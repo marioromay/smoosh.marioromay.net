@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#11100f" />
+  <meta name="theme-color" content="#0a0908" />
   <title>Smoosh</title>
   <meta name="description" content="Smoosh — between the notes." />
   <link rel="stylesheet" href="styles.css" />
@@ -11,29 +11,39 @@
 <body>
   <main class="shell">
     <section class="player" aria-labelledby="title">
-      <div class="mark" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span>
+      <header class="topline">
+        <span>SMOOSH</span>
+        <span>01 / 01</span>
+      </header>
+
+      <div class="hero">
+        <p class="eyebrow">between the notes</p>
+        <h1 id="title">Smoosh<span class="period">.</span></h1>
+        <p class="subtitle"><em>Sonia</em> to the world.<br><span>Smoosh</span> to Mr. Mario.</p>
       </div>
 
-      <p class="eyebrow">between the notes</p>
-      <h1 id="title">Smoosh</h1>
-      <p class="subtitle">Sonia to the world. Smoosh to Mr. Mario.</p>
+      <div class="player-row">
+        <button class="play" id="playButton" type="button" aria-label="Play Smoosh">
+          <svg class="play-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M23 16.5 49 32 23 47.5Z"/></svg>
+          <svg class="pause-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 17h9v30h-9zM35 17h9v30h-9z"/></svg>
+        </button>
 
-      <button class="play" id="playButton" type="button" aria-label="Play Smoosh">
-        <svg class="play-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M23 16.5 49 32 23 47.5Z"/></svg>
-        <svg class="pause-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 17h9v30h-9zM35 17h9v30h-9z"/></svg>
-      </button>
-
-      <div class="timeline">
-        <input id="seek" type="range" min="0" max="100" value="0" step="0.01" aria-label="Audio progress" />
-        <div class="times"><span id="current">0:00</span><span id="duration">3:51</span></div>
+        <div class="timeline">
+          <div class="timeline-head"><span id="status" aria-live="polite">press play</span><span class="duration-label">audio / 3:51</span></div>
+          <input id="seek" type="range" min="0" max="100" value="0" step="0.01" aria-label="Audio progress" />
+          <div class="times"><span id="current">0:00</span><span id="duration">3:51</span></div>
+        </div>
       </div>
 
-      <p class="status" id="status" aria-live="polite">press play</p>
+      <footer>
+        <span>two tempos</span>
+        <span class="frequency" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        <span>one frequency</span>
+      </footer>
+
       <audio id="audio" preload="metadata" src="Smoosh.mp3"></audio>
     </section>
   </main>
-
   <script src="player.js"></script>
 </body>
 </html>
