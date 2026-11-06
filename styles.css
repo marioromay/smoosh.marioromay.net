@@ -110,3 +110,8 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 .playing .start-indicator{background:#e84d3e;box-shadow:0 0 8px #e84d3e99}
 @media(max-width:760px){.controls-main{grid-template-columns:98px minmax(0,1fr);gap:12px}.play.technics-start{width:96px;height:64px;font-size:8px;gap:7px}}
 @media(max-width:390px){.controls-main{grid-template-columns:92px minmax(0,1fr)}.play.technics-start{width:90px;height:60px}}
+
+/* No play overlay on vinyl; preserve drag-to-scrub affordance */
+.record-action{display:none!important}
+.record{cursor:grab}
+.record.scratching{cursor:grabbing}
