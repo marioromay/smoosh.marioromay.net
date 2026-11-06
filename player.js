@@ -12,3 +12,16 @@ vinyl.addEventListener('pointermove',e=>{if(!scratch||e.pointerId!==scratch.id)r
 function finishScratch(e){if(!scratch||e.pointerId!==scratch.id)return;const s=scratch;scratch=null;if(s.moved){suppressClick=true;vinyl.classList.remove('scratching');vinyl.style.removeProperty('--scratch-angle');if(s.wasPlaying)audio.play().catch(()=>{});setTimeout(()=>{suppressClick=false},250)}updateVinyl()}
 vinyl.addEventListener('pointerup',finishScratch);vinyl.addEventListener('pointercancel',finishScratch);
 audio.addEventListener('play',updateVinyl);audio.addEventListener('pause',updateVinyl);updateVinyl();
+
+/* Approximate passage cues for preview; fine-sync against the MP3 before release. */
+const passages=[
+{at:0,text:'Sonya... to the world... is Sonya.'},
+{at:34,text:'Two tempos... tempoing independently... until one catches the other...'},
+{at:73,text:'And somewhere... between the notes... Smoosh appears.'},
+{at:119,text:'Her hand keeps him cool. Her smile gives him calm. Her eyes set him free.'},
+{at:163,text:'But to Smoosh Smoosh... is more than a kiss.'},
+{at:207,text:'And there... between the notes... there she is... Smoosh.'}
+];
+const spoken=document.querySelector('#spoken-line'),passageCount=document.querySelector('#passage-count');let lastPassage=-1;
+function updatePassage(){const t=audio.currentTime||0;let index=0;for(let i=0;i<passages.length;i++){if(t>=passages[i].at)index=i;else break}if(index===lastPassage)return;lastPassage=index;spoken.classList.add('changing');spoken.textContent=passages[index].text;passageCount.textContent=String(index+1).padStart(2,'0')+' / 06';requestAnimationFrame(()=>requestAnimationFrame(()=>spoken.classList.remove('changing')))}
+audio.addEventListener('timeupdate',updatePassage);audio.addEventListener('seeked',updatePassage);audio.addEventListener('loadedmetadata',updatePassage);seek.addEventListener('input',updatePassage);audio.addEventListener('ended',()=>{lastPassage=5;spoken.textContent=passages[5].text;passageCount.textContent='06 / 06'});updatePassage();
