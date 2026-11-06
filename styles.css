@@ -176,3 +176,17 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 .waveform-shell{height:72px;background:#14100f;border:1px solid #362a26;box-shadow:none}
 .scope-marker{background:var(--cream);box-shadow:none}
 @media(max-width:760px){.hero{padding-top:8px}.controls-main{grid-template-columns:78px minmax(0,1fr);gap:10px}.transport-key{width:37px!important;height:44px!important;flex-basis:37px!important}.transport-key svg{width:21px;height:21px}.waveform-shell{height:58px}}
+
+/* Minimal open waveform transport, November preview */
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.listening-controls{padding:4px 0 14px}
+.controls-main{grid-template-columns:78px minmax(0,1fr);gap:12px;padding-top:0}
+.transport-pair{gap:0}
+.transport-key,.transport-key:hover,.transport-key:active,.transport-key.active{width:39px;height:48px;flex:0 0 39px}
+.transport-key svg{width:23px;height:23px}
+.waveform-shell{height:96px;border:0;background:transparent;box-shadow:none;border-radius:0;overflow:visible}
+.scope-display{width:100%;height:100%}
+.scope-marker{top:4px;bottom:4px}
+.timestamps{padding-top:0}
+@media(max-width:760px){.listening-controls{padding:4px 0 12px}.controls-main{grid-template-columns:70px minmax(0,1fr);gap:6px}.transport-key,.transport-key:hover,.transport-key:active,.transport-key.active{width:35px!important;height:44px!important;flex:0 0 35px!important}.transport-key svg{width:21px;height:21px}.waveform-shell{height:76px}}
+@media(max-width:390px){.controls-main{grid-template-columns:66px minmax(0,1fr);gap:5px}.transport-key,.transport-key:hover,.transport-key:active,.transport-key.active{width:33px!important;flex:0 0 33px!important}}
