@@ -91,3 +91,12 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 .record.scratching .record-action{opacity:1}
 @media(hover:none){.record.has-played .record-action{opacity:0}.record.scratching .record-action{opacity:1}}
 @media(prefers-reduced-motion:reduce){.record-action{transition:none}}
+
+/* Selected spoken passages: quiet typography, never crowd the mobile player */
+.spoken-panel{border-top:1px solid var(--line);padding:22px 0 26px;min-height:155px;display:flex;flex-direction:column;justify-content:center}
+.spoken-top{display:flex;justify-content:space-between;gap:12px;color:var(--red);font-size:10px;font-weight:700;letter-spacing:.14em}
+.spoken-line{font-size:clamp(23px,3.2vw,45px);font-weight:700;letter-spacing:-.045em;line-height:1.14;max-width:980px;margin:20px 0 14px;text-wrap:balance;transition:opacity .18s ease}
+.spoken-line.changing{opacity:.35}
+.spoken-note{font-size:9px;color:var(--muted);font-weight:700;letter-spacing:.15em}
+@media(max-width:760px){.spoken-panel{padding:15px 0 19px;min-height:125px}.spoken-top{font-size:8px}.spoken-line{font-size:clamp(21px,5.3vw,28px);margin:12px 0}.spoken-note{font-size:8px}}
+@media(prefers-reduced-motion:reduce){.spoken-line{transition:none}}
