@@ -28,3 +28,22 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 @media(max-width:760px){.editorial{display:block}.hero{padding:30px 0}.record-art{grid-template-columns:1fr;gap:28px}.record{max-width:min(68vw,330px);margin:0 auto}.record-title h1{font-size:clamp(74px,19vw,135px);margin:0 0 14px}.record-caption{font-size:9px}.hero-bottom{padding-left:0}.listening-controls{padding:16px 12px 18px}.controls-main{grid-template-columns:72px 1fr;gap:14px}.play{width:70px;height:70px}.waveform-shell{height:62px}}
 @media(max-width:390px){.record{max-width:70vw}.record-title h1{font-size:19vw}.controls-main{grid-template-columns:1fr}.play{width:68px;height:64px}.hero{padding:24px 0}.record-art{gap:20px}}
 @media(prefers-reduced-motion:reduce){.playing .record{animation:none!important}}
+
+/* Mobile listening-first layout */
+.gallery-row{padding:12px 0 16px;border-top:1px solid var(--line)}.gallery-row .shoot-link{margin:0}
+@media(max-width:760px){
+.frame{padding:14px 18px 20px}.listening{min-height:calc(100svh - 34px)}
+.masthead{padding:11px 0}.brand{font-size:23px}.top-right{font-size:8px;line-height:1.4}
+.editorial{flex:0 0 auto}.hero{padding:22px 0 16px}
+.overline{margin-bottom:16px;font-size:8px}
+.record-art{display:grid;grid-template-columns:clamp(104px,30vw,155px) minmax(0,1fr);gap:16px;align-items:center;margin-bottom:17px}
+.record{max-width:155px;width:100%;border-width:4px;margin:0}
+.record-title h1{font-size:clamp(45px,11vw,76px);line-height:.9;letter-spacing:-.09em;margin:0 0 10px}
+.record-caption{font-size:8px;line-height:1.5;letter-spacing:.09em}
+.record-label{gap:2px}.record-label span,.record-label small{font-size:4px}.record-label b{font-size:clamp(18px,6vw,30px)}
+.hero-bottom{padding:0}.dedication{font-size:clamp(21px,5.5vw,29px);line-height:1.13}
+.listening-controls{padding:12px 12px 14px}.control-top{font-size:9px}.controls-main{padding-top:10px;grid-template-columns:64px minmax(0,1fr);gap:12px}
+.play{width:60px;height:60px}.waveform-shell{height:56px}.track-label{font-size:8px}.timestamps{font-size:9px}
+.gallery-row{padding:15px 0}.shoot-link{font-size:9px}.footer{padding:12px 0;font-size:8px}
+}
+@media(max-width:390px){.record-art{grid-template-columns:100px minmax(0,1fr);gap:12px}.record-title h1{font-size:clamp(40px,11vw,52px)}.controls-main{grid-template-columns:60px minmax(0,1fr)}.play{width:56px;height:56px}}
