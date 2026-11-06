@@ -136,3 +136,12 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 @media(max-width:390px){.turntable-deck{width:min(74vw,calc(100svh - 375px),295px)}.play.deck-start{width:80px;height:49px;font-size:7px}}
 @media(max-height:700px) and (max-width:760px){.turntable-deck{width:min(64vw,calc(100svh - 350px))}}
 @media(prefers-reduced-motion:reduce){.turntable-deck .record{animation:none!important}}
+
+/* Compact transport alongside waveform */
+.controls-main{display:grid;grid-template-columns:124px minmax(0,1fr);gap:20px;align-items:center;padding-top:12px}
+.play.technics-start{position:static;width:116px;height:64px;transform:none}
+.play.technics-start:hover{transform:none}
+.play.technics-start:active,.playing .play.technics-start{transform:translateY(2px)}
+.turntable-deck{padding-bottom:0}
+@media(max-width:760px){.controls-main{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px}.play.technics-start{width:88px;height:58px;font-size:8px}.turntable-deck{padding-bottom:0}}
+@media(max-width:390px){.controls-main{grid-template-columns:86px minmax(0,1fr);gap:9px}.play.technics-start{width:82px;height:54px;font-size:7px}}
