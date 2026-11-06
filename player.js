@@ -58,7 +58,7 @@ function rampMotor(target){
  }
  motorFrame=requestAnimationFrame(frame);
 }
-button.addEventListener('click',()=>{if(motorMode!=='start'){loadScrubAudio();rampMotor('start')}});
+button.addEventListener('click',()=>{if(motorMode!=='start'){loadScrubAudio().then(()=>ctx?.resume().catch(()=>{}));rampMotor('start')}});
 stopButton.addEventListener('click',()=>{if(motorMode!=='stop'&&!audio.paused)rampMotor('stop')});
 
 /* Audible vinyl-style scrubbing. Decode the track only after user interaction;
@@ -72,7 +72,7 @@ function loadScrubAudio(){
   const AudioContextClass=window.AudioContext||window.webkitAudioContext;
   if(!AudioContextClass)throw Error('Web Audio unavailable');
   ctx=new AudioContextClass();
-  await ctx.resume();
+  // Decoding is allowed before a gesture; resume the audio output only on interaction.
   const response=await fetch(audio.currentSrc||audio.querySelector('source')?.src||'/Smoosh.mp3');
   if(!response.ok)throw Error('Audio unavailable');
   forwardBuffer=await ctx.decodeAudioData(await response.arrayBuffer());
@@ -91,6 +91,7 @@ function stopGrain(){
 }
 function scrubSound(time,velocity){
  if(!ctx||!forwardBuffer||!reverseBuffer||!scrubState)return;
+ if(ctx.state==='suspended')ctx.resume().catch(()=>{});
  const now=performance.now();
  if(now-lastGrainAt<35)return;
  lastGrainAt=now;
@@ -168,3 +169,7 @@ seek.addEventListener('pointercancel',finishScrub);
 /* Restore scope progress after all transport transitions. */
 audio.addEventListener('play',()=>{stopButton.classList.remove('active')});
 audio.addEventListener('pause',()=>{button.classList.remove('active')});
+
+/* Begin waveform decoding as soon as the authenticated page loads.
+   No playback or AudioContext resume occurs until user interaction. */
+loadScrubAudio();
