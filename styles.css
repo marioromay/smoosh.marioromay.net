@@ -61,3 +61,22 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 .record-label strong .dot{color:#f0e6d4}
 .spindle-hole{top:57%;width:9px;height:9px}
 @media(max-width:760px){.record-label strong{top:36%;font-size:clamp(10px,3vw,19px)}.spindle-hole{top:57%;width:6px;height:6px}}
+
+/* Vinyl-led layout: centered label and record without duplicate title */
+.record-art{display:flex;align-items:center;justify-content:center;gap:0}
+.record{width:min(52vw,650px);max-width:650px;flex:0 0 auto;margin:0 auto}
+.record-label strong{top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(17px,3vw,45px);line-height:1;letter-spacing:-.09em;text-align:center;z-index:1}
+.spindle-hole{top:50%;left:50%;z-index:2;width:9px;height:9px;background:#151310;box-shadow:0 0 0 1px #b63c32}
+@media(max-width:760px){
+.editorial{flex:0 0 auto}
+.hero{padding:14px 0 10px}
+.overline{margin:0 0 12px}
+.record-art{display:flex;justify-content:center;align-items:center;margin:0 0 14px}
+.record{width:min(76vw,calc(100svh - 410px),360px);max-width:360px;min-width:170px;margin:0 auto}
+.record-label strong{top:50%;font-size:clamp(13px,5vw,26px)}
+.spindle-hole{top:50%;width:6px;height:6px}
+.hero-bottom{margin:0}.dedication{font-size:clamp(19px,5vw,26px)}
+.listening-controls{margin-top:8px}
+}
+@media(max-width:390px){.record{width:min(73vw,calc(100svh - 395px),290px)}.record-label strong{font-size:clamp(12px,4.8vw,23px)}}
+@media(max-height:700px) and (max-width:760px){.hero{padding:8px 0}.record{width:min(61vw,calc(100svh - 365px))}.dedication{font-size:19px}.overline{margin-bottom:8px}}
