@@ -13,7 +13,7 @@ function scopeDraw(){
  g.strokeStyle='rgba(238,69,55,.18)';g.beginPath();g.moveTo(0,mid);g.lineTo(w,mid);g.stroke();
  if(!scopePeaks)return;
  const count=scopePeaks.length;
- g.strokeStyle='#ee4537';g.lineWidth=Math.max(1,dpr*1.15);g.beginPath();
+ g.strokeStyle='#ee4537';g.lineWidth=Math.max(.85,dpr*.75);g.beginPath();
  for(let i=0;i<count;i++){
   const x=(i+.5)*w/count,level=Math.max(.003,scopePeaks[i])*amp;
   g.moveTo(x,mid-level);g.lineTo(x,mid+level);
@@ -76,7 +76,7 @@ function loadScrubAudio(){
   const response=await fetch(audio.currentSrc||audio.querySelector('source')?.src||'/Smoosh.mp3');
   if(!response.ok)throw Error('Audio unavailable');
   forwardBuffer=await ctx.decodeAudioData(await response.arrayBuffer());
-  const samples=forwardBuffer.getChannelData(0),N=420,step=Math.max(1,Math.floor(samples.length/N));scopePeaks=new Float32Array(N);for(let i=0;i<N;i++){let peak=0;for(let k=i*step;k<Math.min(samples.length,(i+1)*step);k+=5)peak=Math.max(peak,Math.abs(samples[k]));scopePeaks[i]=peak}scopeDraw();
+  const samples=forwardBuffer.getChannelData(0),N=1000,step=Math.max(1,Math.floor(samples.length/N));scopePeaks=new Float32Array(N);for(let i=0;i<N;i++){let peak=0;const end=Math.min(samples.length,(i+1)*step),stride=Math.max(1,Math.floor(step/140));for(let k=i*step;k<end;k+=stride)peak=Math.max(peak,Math.abs(samples[k]));scopePeaks[i]=peak}scopeDraw();
   reverseBuffer=ctx.createBuffer(forwardBuffer.numberOfChannels,forwardBuffer.length,forwardBuffer.sampleRate);
   for(let channel=0;channel<forwardBuffer.numberOfChannels;channel++){
    const from=forwardBuffer.getChannelData(channel),to=reverseBuffer.getChannelData(channel);
