@@ -2,36 +2,51 @@ const audio=document.querySelector('#audio'),button=document.querySelector('#pla
 const waveform=document.querySelector('#waveform');const BAR_COUNT=96;const bars=[];for(let i=0;i<BAR_COUNT;i++){const bar=document.createElement('i');const wave=Math.abs(Math.sin(i*.29)*Math.cos(i*.071)+.3*Math.sin(i*.83));const envelope=.55+.45*Math.sin(Math.PI*i/BAR_COUNT);const height=8+Math.round(Math.min(1,wave)*envelope*47);bar.style.setProperty('--height',height+'px');waveform.appendChild(bar);bars.push(bar)}function paintWave(){const fraction=audio.duration?audio.currentTime/audio.duration:0;const index=Math.max(0,Math.min(BAR_COUNT-1,Math.floor(fraction*BAR_COUNT)));for(let i=0;i<bars.length;i++){bars[i].classList.toggle('heard',i<index);bars[i].classList.toggle('current-bar',i===index)}}audio.addEventListener('timeupdate',paintWave);audio.addEventListener('loadedmetadata',paintWave);audio.addEventListener('seeked',paintWave);seek.addEventListener('input',paintWave);paintWave();
 
 
-/* SL-1200-inspired brake: slow the transport and pitch together. */
-let brakeFrame=0,braking=false;
+/* SL-1200 motor: slow pitch-down stop and matching pitch-up start. */
+let motorFrame=0,motorMode='idle';
+const MOTOR_MS=1450,MIN_RATE=.12;
 audio.preservesPitch=false;
 if('mozPreservesPitch' in audio)audio.mozPreservesPitch=false;
 if('webkitPreservesPitch' in audio)audio.webkitPreservesPitch=false;
-function cancelBrake(){if(brakeFrame)cancelAnimationFrame(brakeFrame);brakeFrame=0;braking=false;audio.playbackRate=1}
-function brakeStop(){
- if(braking)return;
- if(audio.paused){cancelBrake();return}
- braking=true;status.textContent='SLOWING DOWN';trackState.textContent='STOPPING';
- const started=performance.now(),durationMs=1450;
- function frame(now){
-  if(!braking)return;
-  const t=Math.min(1,(now-started)/durationMs);
-  audio.playbackRate=Math.max(.12,1-.88*(t*t*(3-2*t)));
-  if(t<1&&!audio.paused)brakeFrame=requestAnimationFrame(frame);
-  else{audio.pause();cancelBrake();playing(false)}
+function cancelMotor(){if(motorFrame)cancelAnimationFrame(motorFrame);motorFrame=0;motorMode='idle'}
+function rampMotor(target){
+ const from=audio.paused?MIN_RATE:Math.max(MIN_RATE,audio.playbackRate);
+ const to=target==='start'?1:MIN_RATE;
+ cancelMotor();
+ const durationMs=Math.max(250,MOTOR_MS*Math.abs(to-from)/(1-MIN_RATE));
+ motorMode=target;
+ const started=performance.now();
+ if(target==='start'){
+  audio.playbackRate=from;
+  audio.play().catch(()=>{cancelMotor();audio.playbackRate=1;status.textContent='PLAYBACK UNAVAILABLE'});
+  status.textContent='SPINNING UP';trackState.textContent='STARTING';
+ }else{
+  status.textContent='SLOWING DOWN';trackState.textContent='STOPPING';
  }
- brakeFrame=requestAnimationFrame(frame);
+ function frame(now){
+  if(motorMode!==target)return;
+  const t=Math.min(1,(now-started)/durationMs);
+  const eased=t*t*(3-2*t);
+  audio.playbackRate=from+(to-from)*eased;
+  if(t<1&&!audio.paused)motorFrame=requestAnimationFrame(frame);
+  else{
+   cancelMotor();
+   if(target==='stop'){audio.pause();audio.playbackRate=1;playing(false)}
+   else{audio.playbackRate=1;playing(true)}
+  }
+ }
+ motorFrame=requestAnimationFrame(frame);
 }
 const transport=button;
-transport.addEventListener('click',async()=>{
- if(braking){cancelBrake();try{await audio.play()}catch(e){status.textContent='PLAYBACK UNAVAILABLE'}return}
- if(audio.paused){cancelBrake();try{await audio.play()}catch(e){status.textContent='PLAYBACK UNAVAILABLE'}}
- else brakeStop();
+transport.addEventListener('click',()=>{
+ if(motorMode==='stop'){rampMotor('start');return}
+ if(motorMode==='start'){rampMotor('stop');return}
+ if(audio.paused)rampMotor('start');else rampMotor('stop');
 });
 const vinyl=document.querySelector('#vinyl');
 let scratch=null;
 vinyl.addEventListener('pointerdown',e=>{
- if(e.button!==0||braking)return;
+ if(e.button!==0||motorMode!=='idle')return;
  scratch={id:e.pointerId,x:e.clientX,y:e.clientY,start:audio.currentTime,wasPlaying:!audio.paused,moved:false};
  vinyl.setPointerCapture(e.pointerId);
 });
