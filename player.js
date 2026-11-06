@@ -1,27 +1,24 @@
 const audio=document.querySelector('#audio'),button=document.querySelector('#playButton'),stopButton=document.querySelector('#stopButton'),seek=document.querySelector('#seek'),current=document.querySelector('#current'),duration=document.querySelector('#duration'),status=document.querySelector('#status'),trackState=document.querySelector('#trackState'),panel=document.querySelector('.listening');const KEY='smoosh-preview-position';const format=s=>Number.isFinite(s)?Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'):'0:00';function sync(){if(!Number.isFinite(audio.duration)||!audio.duration)return;const p=100*audio.currentTime/audio.duration;seek.value=p;seek.style.setProperty('--progress',p+'%');current.textContent=format(audio.currentTime)}function playing(on){panel.classList.toggle('playing',on);button.setAttribute('aria-label',on?'Stop playback':'Start playback');button.setAttribute('aria-pressed',String(on));button.classList.toggle('active',on);status.textContent=on?'NOW PLAYING':'READY WHEN YOU ARE';trackState.textContent=on?'LISTENING':'PRESS PLAY TO BEGIN'}audio.addEventListener('play',()=>playing(true));audio.addEventListener('pause',()=>playing(false));audio.addEventListener('loadedmetadata',()=>{duration.textContent=format(audio.duration);try{const t=Number(sessionStorage.getItem(KEY));if(Number.isFinite(t)&&t>0&&t<audio.duration-3)audio.currentTime=t}catch(e){}sync()});audio.addEventListener('timeupdate',()=>{sync();try{sessionStorage.setItem(KEY,String(audio.currentTime))}catch(e){}});audio.addEventListener('ended',()=>{playing(false);audio.currentTime=0;try{sessionStorage.removeItem(KEY)}catch(e){}sync()});seek.addEventListener('input',()=>{if(!audio.duration)return;audio.currentTime=audio.duration*Number(seek.value)/100;sync()});if('mediaSession'in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:'Smoosh',artist:'A private listening'});navigator.mediaSession.setActionHandler('play',()=>audio.play());navigator.mediaSession.setActionHandler('pause',()=>audio.pause());navigator.mediaSession.setActionHandler('seekto',e=>{if(e.seekTime!=null)audio.currentTime=e.seekTime})}
 
-/* Red phosphor scope: waveform from decoded MP3 where available, synthetic
-   signal until decoding finishes; timeline stays seekable. */
+/* Real recording waveform. No synthetic oscilloscope trace. */
 const scope=document.querySelector('#scope'),scopeShell=scope.parentElement;
-let scopePeaks=null,scopeFrame=0;
+let scopePeaks=null;
 function scopeDraw(){
  const rect=scope.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
  if(!rect.width||!rect.height)return;
  const w=Math.round(rect.width*dpr),h=Math.round(rect.height*dpr);
  if(scope.width!==w||scope.height!==h){scope.width=w;scope.height=h}
  const g=scope.getContext('2d');g.clearRect(0,0,w,h);
- g.strokeStyle='rgba(232,77,62,.11)';g.lineWidth=1;
- for(let i=1;i<9;i++){const x=w*i/9;g.beginPath();g.moveTo(x,0);g.lineTo(x,h);g.stroke()}
- for(let i=1;i<5;i++){const y=h*i/5;g.beginPath();g.moveTo(0,y);g.lineTo(w,y);g.stroke()}
- const count=Math.max(80,Math.floor(w/2)),mid=h/2,amp=h*.35;
- g.beginPath();
+ const mid=h/2,amp=h*.42;
+ g.strokeStyle='rgba(238,69,55,.18)';g.beginPath();g.moveTo(0,mid);g.lineTo(w,mid);g.stroke();
+ if(!scopePeaks)return;
+ const count=scopePeaks.length;
+ g.strokeStyle='#ee4537';g.lineWidth=Math.max(1,dpr*1.15);g.beginPath();
  for(let i=0;i<count;i++){
-  const x=i/(count-1)*w;
-  const magnitude=scopePeaks?scopePeaks[Math.min(scopePeaks.length-1,Math.floor(i/count*scopePeaks.length))]:.15+.6*Math.abs(Math.sin(i*.17)*Math.cos(i*.051));
-  const y=mid+Math.sin(i*.42)*magnitude*amp;
-  if(i===0)g.moveTo(x,y);else g.lineTo(x,y);
+  const x=(i+.5)*w/count,level=Math.max(.003,scopePeaks[i])*amp;
+  g.moveTo(x,mid-level);g.lineTo(x,mid+level);
  }
- g.strokeStyle='#e84d3e';g.lineWidth=Math.max(1.5,dpr*1.15);g.shadowColor='#e84d3e';g.shadowBlur=6*dpr;g.stroke();g.shadowBlur=0;
+ g.stroke();
 }
 function paintWave(){const p=audio.duration?100*audio.currentTime/audio.duration:0;scopeShell.style.setProperty('--progress',p+'%')}
 audio.addEventListener('timeupdate',paintWave);audio.addEventListener('loadedmetadata',paintWave);audio.addEventListener('seeked',paintWave);seek.addEventListener('input',paintWave);
@@ -61,7 +58,7 @@ function rampMotor(target){
  }
  motorFrame=requestAnimationFrame(frame);
 }
-button.addEventListener('click',()=>{if(motorMode!=='start')rampMotor('start')});
+button.addEventListener('click',()=>{if(motorMode!=='start'){loadScrubAudio();rampMotor('start')}});
 stopButton.addEventListener('click',()=>{if(motorMode!=='stop'&&!audio.paused)rampMotor('stop')});
 
 /* Audible vinyl-style scrubbing. Decode the track only after user interaction;
@@ -79,7 +76,7 @@ function loadScrubAudio(){
   const response=await fetch(audio.currentSrc||audio.querySelector('source')?.src||'/Smoosh.mp3');
   if(!response.ok)throw Error('Audio unavailable');
   forwardBuffer=await ctx.decodeAudioData(await response.arrayBuffer());
-  const samples=forwardBuffer.getChannelData(0),N=512,step=Math.max(1,Math.floor(samples.length/N));scopePeaks=new Float32Array(N);for(let i=0;i<N;i++){let peak=0;for(let k=i*step;k<Math.min(samples.length,(i+1)*step);k+=8)peak=Math.max(peak,Math.abs(samples[k]));scopePeaks[i]=peak}scopeDraw();
+  const samples=forwardBuffer.getChannelData(0),N=420,step=Math.max(1,Math.floor(samples.length/N));scopePeaks=new Float32Array(N);for(let i=0;i<N;i++){let peak=0;for(let k=i*step;k<Math.min(samples.length,(i+1)*step);k+=5)peak=Math.max(peak,Math.abs(samples[k]));scopePeaks[i]=peak}scopeDraw();
   reverseBuffer=ctx.createBuffer(forwardBuffer.numberOfChannels,forwardBuffer.length,forwardBuffer.sampleRate);
   for(let channel=0;channel<forwardBuffer.numberOfChannels;channel++){
    const from=forwardBuffer.getChannelData(channel),to=reverseBuffer.getChannelData(channel);
