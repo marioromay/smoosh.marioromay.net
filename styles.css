@@ -80,3 +80,14 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 }
 @media(max-width:390px){.record{width:min(73vw,calc(100svh - 395px),290px)}.record-label strong{font-size:clamp(12px,4.8vw,23px)}}
 @media(max-height:700px) and (max-width:760px){.hero{padding:8px 0}.record{width:min(61vw,calc(100svh - 365px))}.dedication{font-size:19px}.overline{margin-bottom:8px}}
+
+/* Vinyl transport: white center lettering, tactile drag and play affordance */
+.record-label strong,.record-label strong .dot{color:#fff}
+.record{cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;outline-offset:8px}
+.record:focus-visible{outline:2px solid #fff}
+.record.scratching{cursor:grabbing;animation-play-state:paused!important;transform:rotate(var(--scratch-angle,0deg))}
+.record-action{position:absolute;z-index:4;bottom:14%;left:50%;transform:translateX(-50%);padding:7px 12px;border-radius:30px;background:#f0e6d4e8;color:#151310;font-size:10px;letter-spacing:.12em;font-weight:800;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s}
+.record:hover .record-action,.record:focus-visible .record-action,.record:not(.has-played) .record-action{opacity:1}
+.record.scratching .record-action{opacity:1}
+@media(hover:none){.record.has-played .record-action{opacity:0}.record.scratching .record-action{opacity:1}}
+@media(prefers-reduced-motion:reduce){.record-action{transition:none}}
