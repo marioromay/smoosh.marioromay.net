@@ -1,51 +1,8 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#0a0908" />
-  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
-  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
-  <title>Smoosh</title>
-  <meta name="description" content="Smoosh — between the notes." />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <main class="shell">
-    <section class="player" aria-labelledby="title">
-      <header class="topline">
-        <span>SMOOSH</span>
-        <span>01 / 01</span>
-      </header>
-
-      <div class="hero">
-        <p class="eyebrow">between the notes</p>
-        <h1 id="title">Smoosh<span class="period">.</span></h1>
-        <p class="subtitle"><em>Sonya</em> to the world.<br><span>Smoosh</span> to Mr. Mario.</p>
-      </div>
-
-      <div class="player-row">
-        <button class="play" id="playButton" type="button" aria-label="Play Smoosh">
-          <svg class="play-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M23 16.5 49 32 23 47.5Z"/></svg>
-          <svg class="pause-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 17h9v30h-9zM35 17h9v30h-9z"/></svg>
-        </button>
-
-        <div class="timeline">
-          <div class="timeline-head"><span id="status" aria-live="polite">press play</span><span class="duration-label">audio / 3:51</span></div>
-          <input id="seek" type="range" min="0" max="100" value="0" step="0.01" aria-label="Audio progress" />
-          <div class="times"><span id="current">0:00</span><span id="duration">3:51</span></div>
-        </div>
-      </div>
-
-      <footer>
-        <span>two tempos</span>
-        <span class="frequency" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
-        <span>one frequency</span>
-      </footer>
-
-      <audio id="audio" preload="metadata" src="Smoosh.mp3"></audio>
-    </section>
-  </main>
-  <script src="player.js"></script>
-</body>
-</html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#10100f"><meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><title>Smoosh.</title><link rel="stylesheet" href="styles.css"></head>
+<body><main class="frame"><section class="listening" aria-label="Smoosh audio player">
+<header class="masthead"><span class="brand">S<span class="dot">.</span></span><span class="edition">A PRIVATE LISTENING<br>NO. 001 / 001</span><span class="top-right">BETWEEN THE NOTES</span></header>
+<div class="editorial"><div class="side-index" aria-hidden="true">01 — A SINGLE FREQUENCY</div><div class="hero"><p class="overline"><span class="line"></span> A LITTLE SOMETHING FOR YOU</p><h1>Smoosh<span class="dot">.</span></h1><div class="hero-bottom"><p class="dedication"><span>Sonya</span> to the world.<br><em>Smoosh</em> to Mr. Mario.</p><span class="serial">A NOTE<br>IN SOUND</span></div></div></div>
+<section class="listening-controls" aria-label="Playback controls"><div class="control-top"><span class="section-number">01 / LISTEN</span><span id="status" role="status" aria-live="polite">READY WHEN YOU ARE</span></div><div class="controls-main"><button id="playButton" class="play" type="button" aria-label="Play Smoosh"><svg class="play-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M17 10 37 24 17 38Z"/></svg><svg class="pause-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M15 11h7v26h-7zm12 0h7v26h-7z"/></svg></button><div class="track"><div class="track-label"><span id="trackState">PRESS PLAY TO BEGIN</span><span>ONE RECORDING</span></div><input id="seek" type="range" min="0" max="100" value="0" step=".1" aria-label="Seek through recording"><div class="timestamps"><span id="current">0:00</span><span id="duration">3:51</span></div></div></div></section>
+<footer class="footer"><span>TWO TEMPOS.</span><div class="frequency" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span>ONE FREQUENCY.</span></footer>
+<audio id="audio" preload="metadata" src="Smoosh.mp3"></audio></section></main><script src="player.js"></script></body></html>
