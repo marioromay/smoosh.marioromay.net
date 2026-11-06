@@ -43,21 +43,106 @@ transport.addEventListener('click',()=>{
  if(motorMode==='start'){rampMotor('stop');return}
  if(audio.paused)rampMotor('start');else rampMotor('stop');
 });
+
+/* Audible vinyl-style scrubbing. Decode the track only after user interaction;
+   play short directional grains while the original transport is paused. */
 const vinyl=document.querySelector('#vinyl');
-let scratch=null;
-vinyl.addEventListener('pointerdown',e=>{
- if(e.button!==0||motorMode!=='idle')return;
- scratch={id:e.pointerId,x:e.clientX,y:e.clientY,start:audio.currentTime,wasPlaying:!audio.paused,moved:false};
- vinyl.setPointerCapture(e.pointerId);
-});
-vinyl.addEventListener('pointermove',e=>{
- if(!scratch||e.pointerId!==scratch.id)return;
- const dx=e.clientX-scratch.x,dy=e.clientY-scratch.y;
- if(!scratch.moved&&Math.abs(dx)>9&&Math.abs(dx)>Math.abs(dy)){scratch.moved=true;if(scratch.wasPlaying)audio.pause();vinyl.classList.add('scratching')}
- if(!scratch.moved)return;
- const width=Math.max(1,vinyl.getBoundingClientRect().width);
- vinyl.style.setProperty('--scratch-angle',(dx/width*180)+'deg');
- if(Number.isFinite(audio.duration)&&audio.duration>0){audio.currentTime=Math.max(0,Math.min(audio.duration,scratch.start+dx/width*audio.duration*.6));sync();paintWave()}
-});
-function endScratch(e){if(!scratch||e.pointerId!==scratch.id)return;const s=scratch;scratch=null;if(s.moved){vinyl.classList.remove('scratching');vinyl.style.removeProperty('--scratch-angle');if(s.wasPlaying)audio.play().catch(()=>{})}}
-vinyl.addEventListener('pointerup',endScratch);vinyl.addEventListener('pointercancel',endScratch);
+let ctx=null,forwardBuffer=null,reverseBuffer=null,decodePromise=null,grain=null,grainGain=null;
+let scrubState=null,lastGrainAt=0;
+function loadScrubAudio(){
+ if(decodePromise)return decodePromise;
+ decodePromise=(async()=>{
+  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContextClass)throw Error('Web Audio unavailable');
+  ctx=new AudioContextClass();
+  await ctx.resume();
+  const response=await fetch(audio.currentSrc||audio.querySelector('source')?.src||'/Smoosh.mp3');
+  if(!response.ok)throw Error('Audio unavailable');
+  forwardBuffer=await ctx.decodeAudioData(await response.arrayBuffer());
+  reverseBuffer=ctx.createBuffer(forwardBuffer.numberOfChannels,forwardBuffer.length,forwardBuffer.sampleRate);
+  for(let channel=0;channel<forwardBuffer.numberOfChannels;channel++){
+   const from=forwardBuffer.getChannelData(channel),to=reverseBuffer.getChannelData(channel);
+   for(let i=0,n=from.length;i<n;i++)to[i]=from[n-1-i];
+  }
+ })().catch(()=>{decodePromise=null;forwardBuffer=null;reverseBuffer=null});
+ return decodePromise;
+}
+function stopGrain(){
+ if(grain){try{grain.stop()}catch(e){}grain.disconnect();grain=null}
+ if(grainGain){grainGain.disconnect();grainGain=null}
+}
+function scrubSound(time,velocity){
+ if(!ctx||!forwardBuffer||!reverseBuffer||!scrubState)return;
+ const now=performance.now();
+ if(now-lastGrainAt<35)return;
+ lastGrainAt=now;
+ stopGrain();
+ const speed=Math.max(.35,Math.min(3.5,Math.abs(velocity)||.45));
+ const backwards=velocity<0;
+ const buffer=backwards?reverseBuffer:forwardBuffer;
+ const duration=Math.min(.16,.11*speed);
+ const offset=backwards?Math.max(0,forwardBuffer.duration-time):time;
+ const start=Math.min(Math.max(0,offset),Math.max(0,buffer.duration-duration*speed));
+ grain=ctx.createBufferSource();
+ grain.buffer=buffer;grain.playbackRate.value=speed;
+ grainGain=ctx.createGain();
+ const at=ctx.currentTime;
+ grainGain.gain.setValueAtTime(.0001,at);
+ grainGain.gain.linearRampToValueAtTime(.6,at+.012);
+ grainGain.gain.setValueAtTime(.6,at+Math.max(.018,duration-.025));
+ grainGain.gain.linearRampToValueAtTime(.0001,at+duration);
+ grain.connect(grainGain).connect(ctx.destination);
+ grain.start(at,start,duration*speed);
+ grain.stop(at+duration+.01);
+}
+function beginScrub(kind,e){
+ if(e.button!==0||scrubState||motorMode!=='idle')return;
+ const wasPlaying=!audio.paused;
+ scrubState={kind,id:e.pointerId,x:e.clientX,y:e.clientY,time:performance.now(),velocity:0,wasPlaying,start:audio.currentTime,moved:false};
+ cancelMotor();
+ audio.pause();
+ loadScrubAudio().then(()=>{if(scrubState)ctx?.resume().catch(()=>{})});
+ e.currentTarget.setPointerCapture(e.pointerId);
+}
+function moveScrub(e){
+ const s=scrubState;
+ if(!s||e.pointerId!==s.id)return;
+ const dx=e.clientX-s.x,dy=e.clientY-s.y;
+ const now=performance.now(),dt=Math.max(8,now-s.time);
+ if(s.kind==='vinyl'){
+  if(!s.moved&&Math.abs(dx)<5)return;
+  s.moved=true;
+  vinyl.classList.add('scratching');
+  const width=Math.max(1,vinyl.getBoundingClientRect().width);
+  vinyl.style.setProperty('--scratch-angle',(dx/width*180)+'deg');
+  if(Number.isFinite(audio.duration)&&audio.duration>0)
+   audio.currentTime=Math.max(0,Math.min(audio.duration,s.start+dx/width*audio.duration*.6));
+ }else{
+  s.moved=true;
+  if(Number.isFinite(audio.duration)&&audio.duration>0){
+   const rect=seek.getBoundingClientRect();
+   audio.currentTime=Math.max(0,Math.min(audio.duration,(e.clientX-rect.left)/rect.width*audio.duration));
+  }
+ }
+ const direction=dx===0?0:Math.sign(dx);
+ s.velocity=direction*Math.max(.35,Math.min(3.5,Math.abs(e.movementX||dx)/dt*12));
+ s.x=e.clientX;s.y=e.clientY;s.time=now;s.start=audio.currentTime;
+ sync();paintWave();
+ if(direction!==0)scrubSound(audio.currentTime,s.velocity);
+}
+function finishScrub(e){
+ const s=scrubState;
+ if(!s||e.pointerId!==s.id)return;
+ scrubState=null;stopGrain();
+ vinyl.classList.remove('scratching');vinyl.style.removeProperty('--scratch-angle');
+ if(s.wasPlaying)audio.play().catch(()=>{});
+ else playing(false);
+}
+vinyl.addEventListener('pointerdown',e=>beginScrub('vinyl',e));
+vinyl.addEventListener('pointermove',moveScrub);
+vinyl.addEventListener('pointerup',finishScrub);
+vinyl.addEventListener('pointercancel',finishScrub);
+seek.addEventListener('pointerdown',e=>beginScrub('wave',e));
+seek.addEventListener('pointermove',moveScrub);
+seek.addEventListener('pointerup',finishScrub);
+seek.addEventListener('pointercancel',finishScrub);
