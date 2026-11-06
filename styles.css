@@ -100,3 +100,13 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 .spoken-note{font-size:9px;color:var(--muted);font-weight:700;letter-spacing:.15em}
 @media(max-width:760px){.spoken-panel{padding:15px 0 19px;min-height:125px}.spoken-top{font-size:8px}.spoken-line{font-size:clamp(21px,5.3vw,28px);margin:12px 0}.spoken-note{font-size:8px}}
 @media(prefers-reduced-motion:reduce){.spoken-line{transition:none}}
+
+/* SL-1200-inspired transport: a tactile start/stop key, not a second play icon */
+.controls-main{grid-template-columns:132px minmax(0,1fr);gap:25px}
+.play.technics-start{width:124px;height:74px;border-radius:3px;background:#c8c3b9;color:#1a1917;border:1px solid #e8e2d7;box-shadow:inset 0 2px 1px #fff8,inset 0 -5px 0 #7e7a72,0 3px 0 #090807;display:flex;flex-direction:column;justify-content:center;gap:9px;font-size:10px;letter-spacing:.075em;font-weight:900;line-height:1.1;transition:background .12s,transform .12s,box-shadow .12s}
+.play.technics-start:hover{background:#e5dfd2;transform:none}
+.play.technics-start:active,.playing .play.technics-start{transform:translateY(2px);box-shadow:inset 0 2px 5px #0003,inset 0 -2px 0 #777,0 1px 0 #090807}
+.start-indicator{display:block;width:8px;height:8px;border-radius:50%;background:#77736d;box-shadow:inset 0 0 0 1px #5a5650}
+.playing .start-indicator{background:#e84d3e;box-shadow:0 0 8px #e84d3e99}
+@media(max-width:760px){.controls-main{grid-template-columns:98px minmax(0,1fr);gap:12px}.play.technics-start{width:96px;height:64px;font-size:8px;gap:7px}}
+@media(max-width:390px){.controls-main{grid-template-columns:92px minmax(0,1fr)}.play.technics-start{width:90px;height:60px}}
