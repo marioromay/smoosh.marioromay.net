@@ -47,3 +47,11 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 .gallery-row{padding:15px 0}.shoot-link{font-size:9px}.footer{padding:12px 0;font-size:8px}
 }
 @media(max-width:390px){.record-art{grid-template-columns:100px minmax(0,1fr);gap:12px}.record-title h1{font-size:clamp(40px,11vw,52px)}.controls-main{grid-template-columns:60px minmax(0,1fr)}.play{width:56px;height:56px}}
+
+/* Simplified label and corrected masthead */
+.brand{font-weight:800;letter-spacing:-.065em;font-size:clamp(24px,2.6vw,36px)}
+.record-label{position:relative;gap:0;justify-content:center}
+.record-label strong{font-size:clamp(8px,1.15vw,17px);letter-spacing:.09em;font-weight:900;position:absolute;top:24%;left:50%;transform:translateX(-50%);white-space:nowrap}
+.spindle-hole{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:9px;height:9px;border-radius:50%;background:#151310;box-shadow:inset 0 0 0 1px #0008,0 0 0 2px #bd392f}
+.record-title h1{margin-bottom:0}
+@media(max-width:760px){.brand{font-size:26px}.record-label strong{font-size:clamp(6px,1.6vw,10px);top:22%}.spindle-hole{width:6px;height:6px;box-shadow:0 0 0 1px #bd392f}.record-title h1{margin-bottom:0}}
