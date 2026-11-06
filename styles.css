@@ -115,3 +115,24 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 .record-action{display:none!important}
 .record{cursor:grab}
 .record.scratching{cursor:grabbing}
+
+/* Deck-mounted START/STOP: record keeps its position and rotation phase when paused. */
+.record-art{display:flex;justify-content:center;align-items:center}
+.turntable-deck{position:relative;width:min(55vw,650px);max-width:650px;margin:0 auto;padding-bottom:12px}
+.turntable-deck .record{width:100%;max-width:none;margin:0;animation:spin 1.8s linear infinite;animation-play-state:paused}
+.playing .turntable-deck .record{animation-play-state:running}
+.turntable-deck .record.scratching{animation-play-state:paused!important}
+.play.deck-start{position:absolute;bottom:0;left:0;z-index:5;width:116px;height:64px;font-size:9px;transform:translate(-5%,10%);border:2px solid #1b1916}
+.play.deck-start:hover{transform:translate(-5%,10%)}
+.play.deck-start:active,.playing .play.deck-start{transform:translate(-5%,calc(10% + 2px))}
+.controls-main{display:block;padding-top:12px}
+@media(max-width:760px){
+ .record-art{display:flex;justify-content:center}
+ .turntable-deck{width:min(78vw,calc(100svh - 390px),365px);min-width:170px;padding-bottom:16px}
+ .turntable-deck .record{width:100%;min-width:0;max-width:none}
+ .play.deck-start{width:88px;height:53px;font-size:8px;left:0;bottom:0}
+ .controls-main{display:block;padding-top:8px}
+}
+@media(max-width:390px){.turntable-deck{width:min(74vw,calc(100svh - 375px),295px)}.play.deck-start{width:80px;height:49px;font-size:7px}}
+@media(max-height:700px) and (max-width:760px){.turntable-deck{width:min(64vw,calc(100svh - 350px))}}
+@media(prefers-reduced-motion:reduce){.turntable-deck .record{animation:none!important}}
