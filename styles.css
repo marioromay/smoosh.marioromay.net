@@ -162,3 +162,17 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 .record:before{background:linear-gradient(125deg,transparent 22%,#ffffff20 42%,transparent 56%,#ffffff0a 70%,transparent 80%)}
 @media(max-width:760px){.controls-main{grid-template-columns:94px minmax(0,1fr);gap:9px}.transport-pair{gap:5px}.transport-key{width:44px;height:48px;flex-basis:44px}.transport-key svg{width:20px;height:20px}.waveform-shell{height:64px}.track-label{font-size:8px}}
 @media(max-width:390px){.controls-main{grid-template-columns:84px minmax(0,1fr);gap:7px}.transport-key{width:39px;height:44px;flex-basis:39px}.transport-key svg{width:18px;height:18px}}
+
+/* Cleaner editorial layout: no overline; bare transport glyphs. */
+.hero{padding-top:18px}
+.controls-main{grid-template-columns:92px minmax(0,1fr);gap:18px}
+.transport-pair{gap:4px}
+.transport-key,.transport-key:hover,.transport-key:active,.transport-key.active{width:44px;height:48px;flex:0 0 44px;border:0;border-radius:0;background:transparent;box-shadow:none;transform:none;color:var(--cream);padding:0;transition:color .16s,opacity .16s}
+.transport-key:first-child{color:var(--red)}
+.transport-key svg{width:25px;height:25px}
+.transport-key:hover{opacity:.65}
+.transport-key:focus-visible{outline:2px solid var(--red);outline-offset:0;border-radius:2px}
+.transport-key.active{color:var(--red)}
+.waveform-shell{height:72px;background:#14100f;border:1px solid #362a26;box-shadow:none}
+.scope-marker{background:var(--cream);box-shadow:none}
+@media(max-width:760px){.hero{padding-top:8px}.controls-main{grid-template-columns:78px minmax(0,1fr);gap:10px}.transport-key{width:37px!important;height:44px!important;flex-basis:37px!important}.transport-key svg{width:21px;height:21px}.waveform-shell{height:58px}}
