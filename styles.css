@@ -264,3 +264,46 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
  .waveform-shell{height:52px}
  .masthead{padding:6px 0}
 }
+
+/* Desktop composition: vinyl left, dedication and live liner notes right.
+   Preserve the original mobile arrangement with CSS ordering. */
+@media(min-width:761px){
+ .frame{height:100svh;min-height:0;overflow:hidden;padding:clamp(12px,2vh,24px) clamp(20px,3vw,48px)}
+ .listening{height:100%;min-height:0;max-width:1420px}
+ .masthead{padding:clamp(8px,1.3vh,15px) 0}
+ .desktop-stage{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);grid-template-rows:auto minmax(0,1fr);column-gap:clamp(30px,5vw,90px);align-items:center;padding:clamp(12px,2vh,26px) clamp(0px,2vw,30px)}
+ .editorial,.hero{display:contents!important}
+ .side-index{display:none!important}
+ .record-art{grid-column:1;grid-row:1/3;align-self:center;justify-self:center;display:flex;align-items:center;justify-content:center;width:100%;min-height:0;margin:0!important}
+ .turntable-deck{width:min(100%,calc(100svh - 310px),570px)!important;min-width:0;max-width:570px}
+ .record{width:100%;max-width:none}
+ .hero-bottom{grid-column:2;grid-row:1;align-self:end;padding:0!important;margin:0 0 clamp(14px,2vh,30px)}
+ .dedication{font-size:clamp(24px,2.6vw,42px);line-height:1.14}
+ .readalong{grid-column:2;grid-row:2;align-self:start;width:100%;min-width:0;border-top:1px solid var(--line);margin:0!important;padding-top:clamp(10px,2vh,22px)}
+ .transcript{padding:0!important}
+ .transcript-lines{height:clamp(140px,24vh,230px)!important;max-height:none!important}
+ .transcript-line{font-size:clamp(15px,1.4vw,20px)!important;line-height:1.35!important}
+ .transcript-line.active{font-size:clamp(19px,1.85vw,26px)!important}
+ .listening-controls{flex:0 0 auto;width:min(100%,1160px);align-self:center;padding:clamp(5px,.8vh,10px) 0!important}
+ .waveform-shell{height:clamp(48px,7vh,74px)}
+ .footer{flex:0 0 auto;padding:clamp(6px,1vh,12px) 0!important}
+}
+@media(min-width:761px) and (max-height:740px){
+ .desktop-stage{padding:6px 0;column-gap:30px}
+ .turntable-deck{width:min(100%,calc(100svh - 255px),440px)!important}
+ .hero-bottom{margin-bottom:10px}
+ .dedication{font-size:clamp(21px,2.2vw,30px)}
+ .transcript-lines{height:130px!important}
+ .waveform-shell{height:48px}
+}
+@media(max-width:760px){
+ .desktop-stage{display:contents}
+ .masthead{order:0}
+ .editorial{order:1}
+ .listening-controls{order:2}
+ .readalong{order:3}
+ .footer{order:4}
+}
+/* Wider Smoosh wordmark, always safely inside the red label. */
+.record-label strong{font-size:clamp(19px,3.3vw,49px);letter-spacing:-.075em;max-width:91%;white-space:nowrap}
+@media(max-width:760px){.record-label strong{font-size:clamp(14px,5.4vw,29px);max-width:91%}}
