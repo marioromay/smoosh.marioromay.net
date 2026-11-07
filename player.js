@@ -183,7 +183,9 @@ const cueData=[[1.04,"Sonya... to the world... is Sonya."],[4.2,"She goes about.
 const lineWrap=document.querySelector('#transcriptLines');
 const cueEls=cueData.map(([t,text])=>{
  const el=document.createElement('button');el.type='button';el.className='transcript-line';
- el.textContent=text;el.setAttribute('aria-label','Seek to: '+text);
+ const parts=text.split(/\\b(Sonya|Smoosh)\\b/g);
+ parts.forEach(part=>{if(part==='Sonya'||part==='Smoosh'){const span=document.createElement('span');span.className='lyric-name';span.textContent=part;el.appendChild(span)}else el.appendChild(document.createTextNode(part))});
+ el.setAttribute('aria-label','Seek to: '+text);
  el.hidden=true;
  el.addEventListener('click',()=>{audio.currentTime=Math.min(audio.duration||231,t);sync();paintWave();followText(true)});
  lineWrap.appendChild(el);return el;
