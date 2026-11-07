@@ -232,3 +232,6 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 .footer{margin-top:0;padding-top:12px!important;padding-bottom:12px!important}
 @media(max-width:760px){.readalong{margin-top:5px}.transcript{padding:6px 0 8px!important}.transcript-lines{height:clamp(120px,20svh,154px)!important}.transcript-line{font-size:clamp(13px,3.5vw,17px)!important;line-height:1.23!important}.transcript-line.active{font-size:clamp(16px,4.3vw,21px)!important}.footer{padding-top:10px!important;padding-bottom:10px!important}}
 @media(max-width:390px){.transcript-lines{height:122px!important}}
+
+/* Proper names stay cream-white in every lyric state, including active red. */
+.transcript-line .lyric-name,.transcript-line.active .lyric-name,.transcript-line.past .lyric-name{color:#f6f0e6!important}
