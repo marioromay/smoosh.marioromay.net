@@ -307,3 +307,8 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 /* Wider Smoosh wordmark, always safely inside the red label. */
 .record-label strong{font-size:clamp(19px,3.3vw,49px);letter-spacing:-.075em;max-width:91%;white-space:nowrap}
 @media(max-width:760px){.record-label strong{font-size:clamp(14px,5.4vw,29px);max-width:91%}}
+
+/* Size lettering relative to the actual red center, not the viewport. */
+.record-label{container-type:inline-size}
+.record-label strong{font-size:clamp(12px,22cqw,48px)!important;letter-spacing:-.07em;max-width:92%}
+@media(max-width:760px){.record-label strong{font-size:clamp(11px,22cqw,35px)!important}}
