@@ -177,10 +177,38 @@ loadScrubAudio();
 /* Read along: word-aligned phrase starts from the recording. */
 const readToggle=document.querySelector('#readToggle'),transcript=document.querySelector('#transcript');
 const cueData=[[1.04,"Sonya... to the world... is Sonya."],[4.2,"She goes about... being Sonya."],[7.28,"Then somewhere along the way..."],[9.24,"she meets... Mr. Mario."],[12.12,"And to Mr. Mario..."],[13.82,"she became Smoosh."],[16.94,"At first... Smoosh was a name."],[20.1,"Then Mr. Mario noticed... something else."],[23.38,"A Smoosh phenomenon."],[26.62,"Certain conditions... seem to bring out Smoosh."],[29.76,"It happens when they share..."],[31.42,"a certain frequency."],[32.92,"Two tempos... tempoing independently..."],[36.16,"until one catches the other..."],[39.32,"discovering synchronicity."],[42.5,"And somewhere... between the notes..."],[45.78,"Smoosh appears."],[49.24,"Sonya slows down."],[52.08,"Her voice gets softer."],[55.44,"Sonya gets sweeter."],[58.58,"Mr. Mario catches her glance..."],[61.96,"Sonya blushes..."],[65.019,"and her eyes give it away."],[68.3,"That special smile emerges."],[71.44,"Sonya has a smile... Smoosh has one too."],[77.76,"Mr. Mario knows... the difference."],[81.08,"Sonya... to the world."],[84.32,"Smoosh... to Mr. Mario."],[87.3,"When their hands... are handing together..."],[90.62,"two temperatures meet."],[92.2,"His runs warm..."],[94,"hers... a little cooler."],[97.22,"Warm meets cool... and cool meets warm..."],[103.36,"temperatures begin tempering."],[106.7,"Optimal balance... has been dialed in."],[109.8,"Her hand keeps him cool."],[113.02,"Her smile gives him calm."],[116.16,"Her eyes set him free."],[119.56,"COOL... CALM... FREE."],[125.78,"Sometimes her other hand..."],[129.08,"gently pets his mitt."],[132.22,"A small gesture... accenting the moment."],[137.08,"Mitt... Sonya's word for Mr. Mario's hands."],[141.74,"And the mitts... they fit."],[148.22,"A custom fit... no alterations required."],[154.7,"The first kiss... saisons were consumed."],[160.96,"Mr. Mario asked... for permission."],[164.28,"Sonya... agreed."],[167.64,"As if one meaning wasn't enough..."],[170.62,"Smoosh became a verb."],[173.86,"To smoosh... to kiss."],[180.16,"But to Smoosh Smoosh... is more than a kiss."],[186.82,"Tender... sweet... pure."],[196.26,"Every time."],[199.42,"During a Smoosh Smoosh event..."],[202.7,"the rest of the world... takes five."],[205.82,"It's like finding... a pocket of light."],[208.98,"Except this pocket... you don't capture."],[212.14,"You stay... in the pocket."],[215.34,"But wherever it happens..."],[218.72,"they share that frequency."],[221.8,"And there... between the notes..."],[224.94,"there she is... Smoosh."]];
-const lineWrap=document.createElement('div');lineWrap.className='transcript-lines';transcript.appendChild(lineWrap);
-const cueEls=cueData.map(([t,text])=>{const el=document.createElement('button');el.type='button';el.className='transcript-line';el.textContent=text;el.addEventListener('click',()=>{audio.currentTime=Math.min(audio.duration||231,t);sync();paintWave();followText(true)});lineWrap.appendChild(el);return el});
-let currentCue=-1,userScrolledAt=0;
-readToggle.addEventListener('click',()=>{const open=readToggle.getAttribute('aria-expanded')!=='true';readToggle.setAttribute('aria-expanded',String(open));transcript.hidden=!open;if(open)followText(true)});
-lineWrap.addEventListener('scroll',()=>{userScrolledAt=Date.now()},{passive:true});
-function followText(force=false){if(transcript.hidden)return;let i=0;for(let k=1;k<cueData.length;k++){if(cueData[k][0]>audio.currentTime)break;i=k}if(i===currentCue&&!force)return;if(currentCue>=0)cueEls[currentCue].classList.remove('active');currentCue=i;cueEls.forEach((el,k)=>el.classList.toggle('past',k<i));cueEls[i].classList.add('active');if(force||Date.now()-userScrolledAt>5000)lineWrap.scrollTo({top:Math.max(0,cueEls[i].offsetTop-lineWrap.offsetTop-lineWrap.clientHeight*.35),behavior:force?'instant':'smooth'})}
-audio.addEventListener('timeupdate',()=>followText());audio.addEventListener('seeked',()=>followText(true));
+
+const lineWrap=document.querySelector('#transcriptLines');
+const readAction=readToggle.querySelector('.read-toggle-action');
+const cueEls=cueData.map(([t,text])=>{
+ const el=document.createElement('button');el.type='button';el.className='transcript-line';el.textContent=text;
+ el.setAttribute('aria-label','Seek to: '+text);
+ el.addEventListener('click',()=>{audio.currentTime=Math.min(audio.duration||231,t);sync();paintWave();followText(true)});
+ lineWrap.appendChild(el);return el;
+});
+let currentCue=-1,userScrolledAt=0,autoScrolling=false;
+readToggle.addEventListener('click',()=>{
+ const open=readToggle.getAttribute('aria-expanded')!=='true';
+ readToggle.setAttribute('aria-expanded',String(open));transcript.hidden=!open;
+ readAction.firstChild.textContent=open?'HIDE LYRICS ':'SHOW LYRICS ';
+ if(open)followText(true);
+});
+lineWrap.addEventListener('wheel',()=>{userScrolledAt=Date.now()},{passive:true});
+lineWrap.addEventListener('touchstart',()=>{userScrolledAt=Date.now()},{passive:true});
+lineWrap.addEventListener('pointerdown',()=>{userScrolledAt=Date.now()},{passive:true});
+lineWrap.addEventListener('keydown',()=>{userScrolledAt=Date.now()});
+function followText(force=false){
+ if(transcript.hidden)return;
+ let i=0;for(let k=1;k<cueData.length;k++){if(cueData[k][0]>audio.currentTime)break;i=k}
+ if(i===currentCue&&!force)return;
+ if(currentCue>=0){cueEls[currentCue].classList.remove('active');cueEls[currentCue].removeAttribute('aria-current')}
+ currentCue=i;
+ cueEls.forEach((el,k)=>el.classList.toggle('past',k<i));
+ const el=cueEls[i];el.classList.add('active');el.setAttribute('aria-current','true');
+ if(force||Date.now()-userScrolledAt>4500){
+  const top=el.offsetTop-lineWrap.offsetTop-(lineWrap.clientHeight-el.offsetHeight)/2;
+  lineWrap.scrollTo({top:Math.max(0,top),behavior:force||window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+ }
+}
+audio.addEventListener('timeupdate',()=>followText());
+audio.addEventListener('seeked',()=>followText(true));
