@@ -218,3 +218,17 @@ body{background:radial-gradient(ellipse at 50% 35%,#27221c 0%,#151310 70%)}
 .footer .frequency{display:none!important}
 @media(max-width:760px){.read-toggle{min-height:54px}.read-toggle-title{font-size:10px}.read-toggle-action{font-size:9px}.transcript-lines{height:248px;max-height:none}.transcript-line{font-size:17px;min-height:46px}.transcript-line.active{font-size:22px}.transcript-bottom{font-size:8px}.footer{align-items:center}}
 @media(max-width:390px){.read-toggle-title:before{width:12px;margin-right:8px}.read-toggle-action{gap:6px}.transcript-bottom{letter-spacing:.06em}}
+
+/* No transcript controls or scroll container: a three-line live lyric sleeve. */
+.readalong{margin-top:10px;border-top:1px solid #4b4037}
+.transcript{padding:10px 0 12px!important}
+.transcript-lines{display:grid!important;grid-template-rows:repeat(3,minmax(0,1fr));align-items:center;justify-items:start;gap:0;height:clamp(136px,17vh,188px)!important;max-height:none!important;min-height:0;overflow:hidden!important;mask-image:none!important;padding:0!important;scroll-behavior:auto!important}
+.transcript-line{display:block;width:100%;min-height:0!important;margin:0;padding:3px 0!important;border:0;background:transparent;color:#8d847a;font:500 clamp(14px,1.55vw,20px)/1.25 Arial,Helvetica,sans-serif!important;letter-spacing:-.02em;text-align:left;cursor:pointer}
+.transcript-line[hidden]{display:none!important}
+.transcript-line.active{color:var(--red);font-weight:700!important;font-size:clamp(17px,1.95vw,25px)!important}
+.transcript-line.past{color:#9e9487}
+.transcript-line:focus-visible{outline:1px solid var(--red)}
+.transcript-bottom,.read-toggle,.gallery-row{display:none!important}
+.footer{margin-top:0;padding-top:12px!important;padding-bottom:12px!important}
+@media(max-width:760px){.readalong{margin-top:5px}.transcript{padding:6px 0 8px!important}.transcript-lines{height:clamp(120px,20svh,154px)!important}.transcript-line{font-size:clamp(13px,3.5vw,17px)!important;line-height:1.23!important}.transcript-line.active{font-size:clamp(16px,4.3vw,21px)!important}.footer{padding-top:10px!important;padding-bottom:10px!important}}
+@media(max-width:390px){.transcript-lines{height:122px!important}}
